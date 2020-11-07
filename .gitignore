@@ -15,3 +15,5 @@ dist/
 *.log
 _site/
 .firebase/
+
+/lib
