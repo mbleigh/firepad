@@ -7,6 +7,12 @@
     "Michael Lehenbauer <michael@firebase.com>"
   ],
   "homepage": "http://www.firepad.io/",
+  "exports": {
+    ".": "./lib/esm/index.js",
+    "./adapters/monaco": "./lib/esm/adapters/monaco.js",
+    "./cjs": "./lib/cjs/index.js",
+    "./cjs/adapters/monaco": "./lib/cjs/adapters/monaco.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/firebase/firepad.git"
@@ -70,9 +76,9 @@
   "scripts": {
     "test": "grunt test",
     "travis": "grunt",
-    "dev": "grunt watch",
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
-    "prepare": "npm run build",
-    "watch": "tsc -w"
+    "clean": "rm -rf ./lib",
+    "build": "tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "prepare": "npm run clean && npm run build",
+    "dev": "tsc -w"
   }
 }

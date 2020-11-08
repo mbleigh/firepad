@@ -1,9 +1,9 @@
 import * as monaco from "monaco-editor";
-import { Firepad } from "./index";
-import { Adapter } from "./adapter";
-import { Cursor, CursorData } from "./cursor";
-import { TextOperation } from "./text-operation";
-import { debug } from "./utils";
+import { Firepad } from "../index";
+import { Adapter } from "../adapter";
+import { Cursor, CursorData } from "../cursor";
+import { TextOperation } from "../text-operation";
+import { debug } from "../utils";
 
 /**
  * @function getCSS - For Internal Usage Only
