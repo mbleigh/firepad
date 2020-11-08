@@ -7,12 +7,6 @@
     "Michael Lehenbauer <michael@firebase.com>"
   ],
   "homepage": "http://www.firepad.io/",
-  "exports": {
-    ".": "./lib/esm/index.js",
-    "./adapters/monaco": "./lib/esm/adapters/monaco.js",
-    "./cjs": "./lib/cjs/index.js",
-    "./cjs/adapters/monaco": "./lib/cjs/adapters/monaco.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/firebase/firepad.git"
