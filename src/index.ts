@@ -3,7 +3,7 @@ import { EditorClient } from "./editor-client";
 import { EntityManager } from "./entity-manager";
 import { EventEmitter } from "./event-emitter";
 import { FirebaseAdapter } from "./firebase-adapter";
-import { elt } from "./utils";
+import { debug, elt } from "./utils";
 
 export interface FirepadOptions {
   richTextShortcuts?: boolean;
@@ -24,23 +24,27 @@ export class Firepad extends EventEmitter() {
   private firebaseAdapter: FirebaseAdapter;
   private client: EditorClient;
   private ready: boolean = false;
+  private defaultText: string | null;
 
   constructor(
     readonly ref: firebase.database.Reference,
     readonly adapter: Adapter,
-    options: FirepadOptions,
-    defaultText: null
+    options: FirepadOptions
   ) {
     super();
+    debug("the very top");
 
     this.options = Object.assign<FirepadOptions, FirepadOptions>(
       {
         richTextShortcuts: false,
         richTextToolbar: false,
         imageInsertionUI: true,
+        defaultText: null,
       },
       options
     );
+
+    this.defaultText = this.options.defaultText || null;
 
     const editorWrapper = adapter.getContainer();
     this.firepadWrapper = elt("div", null, { class: "firepad" });
@@ -105,9 +109,9 @@ export class Firepad extends EventEmitter() {
       this.ready = true;
       this.adapter.grabDocumentState();
 
-      const defaultText = this.options.defaultText;
-      if (defaultText && this.isHistoryEmpty()) {
-        this.setText(defaultText);
+      debug("firebaseadapter ready", this.defaultText, this.isHistoryEmpty());
+      if (this.defaultText && this.isHistoryEmpty()) {
+        this.setText(this.defaultText);
       }
 
       this.trigger("ready");

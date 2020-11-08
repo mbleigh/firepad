@@ -3,6 +3,7 @@ import { Firepad } from "./index";
 import { Adapter } from "./adapter";
 import { Cursor, CursorData } from "./cursor";
 import { TextOperation } from "./text-operation";
+import { debug } from "./utils";
 
 /**
  * @function getCSS - For Internal Usage Only
@@ -87,7 +88,7 @@ export class MonacoAdapter implements Adapter {
   }
 
   getContainer(): HTMLElement {
-    return this.getContainer();
+    return this.editor.getContainerDomNode();
   }
 
   /**
@@ -301,6 +302,7 @@ export class MonacoAdapter implements Adapter {
    * Note: OT.js Operation expects the cursor to be at the end of content
    */
   operationFromMonacoChanges(change: any, content: string, offset: number) {
+    console.log("operationFromMonacoChanges", change, content, offset);
     /** Change Informations */
     var text = change.text;
     var rangeLength = change.rangeLength;
@@ -358,8 +360,8 @@ export class MonacoAdapter implements Adapter {
 
   onChange = (event: monaco.editor.IModelContentChangedEvent): void => {
     if (!this.ignoreChanges) {
-      var content = this.lastDocLines.join(this.editorModel.getEOL());
-      var offset = 0;
+      const content = this.lastDocLines.join(this.editorModel.getEOL());
+      let offset = 0;
 
       /** If no change information recieved */
       if (!event.changes) {
@@ -372,7 +374,8 @@ export class MonacoAdapter implements Adapter {
         var pair = this.operationFromMonacoChanges(change, content, offset);
         offset += pair[0].targetLength - pair[0].baseLength;
 
-        this.trigger("change", pair);
+        debug("change pair:", pair);
+        this.trigger("change", ...pair);
       });
 
       /** Update Editor Content */
@@ -396,7 +399,7 @@ export class MonacoAdapter implements Adapter {
       return;
     }
 
-    action.apply(null, args);
+    action(...args);
   }
 
   /**

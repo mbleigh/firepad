@@ -1,6 +1,5 @@
+import { Entity } from "./entity";
 import { assert } from "./utils";
-
-var firepad = firepad || {};
 
 export class EntityManager {
   entities = {};
@@ -37,11 +36,11 @@ export class EntityManager {
   }
 
   register(type, options) {
-    firepad.utils.assert(
+    assert(
       options.render,
       "Entity options should include a 'render' function!"
     );
-    firepad.utils.assert(
+    assert(
       options.fromElement,
       "Entity options should include a 'fromElement' function!"
     );
@@ -85,7 +84,7 @@ export class EntityManager {
 
     if (type && this.entities[type]) {
       var info = this.entities[type].fromElement(element);
-      return new firepad.Entity(type, info);
+      return new Entity(type, info);
     }
   }
 
@@ -93,7 +92,7 @@ export class EntityManager {
     var type = entity.type,
       info = entity.info;
     if (this.entities[type] && this.entities[type][renderFn]) {
-      var windowDocument = firepad.document || (window && window.document);
+      var windowDocument = window?.document;
       var res = this.entities[type][renderFn](
         info,
         entityHandle,
@@ -101,11 +100,11 @@ export class EntityManager {
       );
       if (res) {
         if (typeof res === "string") {
-          var div = (firepad.document || document).createElement("div");
+          var div = windowDocument.createElement("div");
           div.innerHTML = res;
           return div.childNodes[0];
         } else if (typeof res === "object") {
-          firepad.utils.assert(
+          assert(
             typeof res.nodeType !== "undefined",
             "Error rendering " +
               type +

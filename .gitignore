@@ -17,3 +17,8 @@ _site/
 .firebase/
 
 /lib
+/old
+# test
+/index.ts
+/index.html
+/.cache

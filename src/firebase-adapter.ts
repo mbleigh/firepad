@@ -1,6 +1,6 @@
 import { EventEmitter } from "./event-emitter";
 import { TextOperation } from "./text-operation";
-import { assert, log } from "./utils";
+import { assert, debug, log } from "./utils";
 import type firebase from "firebase";
 
 const SERVER_TIMESTAMP = { ".sv": "timestamp" };
@@ -51,7 +51,6 @@ export class FirebaseAdapter extends EventEmitter([
     userColor?: string
   ) {
     super();
-
     if (userId) {
       this.setUserId(userId);
       this.setColor(userColor!);
@@ -144,6 +143,7 @@ export class FirebaseAdapter extends EventEmitter([
       return;
     }
 
+    debug(this.document, operation);
     // Sanity check that this operation is valid.
     assert(
       this.document?.targetLength === operation.baseLength,
@@ -254,6 +254,7 @@ export class FirebaseAdapter extends EventEmitter([
         this.checkpointrevision = revisionFromId(revisionId);
         this.monitorHistoryStartingAt(this.checkpointrevision + 1);
       } else {
+        debug("no history found, starting from scratch");
         this.checkpointrevision = 0;
         this.monitorHistoryStartingAt(this.checkpointrevision);
       }
@@ -274,7 +275,9 @@ export class FirebaseAdapter extends EventEmitter([
         }
       });
 
-      historyRef.once("value", () => {
+      historyRef.once("value", (snap) => {
+        debug("history value:", snap.val());
+
         this.handleInitialRevisions();
       });
     }, 0);
@@ -285,7 +288,7 @@ export class FirebaseAdapter extends EventEmitter([
 
     // Compose the checkpoint and all subsequent revisions into a single operation to apply at once.
     this.revision = this.checkpointrevision!;
-    var revisionId = revisionToId(this.revision),
+    let revisionId = revisionToId(this.revision),
       pending = this.pendingReceivedRevisions;
     while (pending[revisionId] != null) {
       var revision = this.parserevision(pending[revisionId]);
@@ -306,6 +309,7 @@ export class FirebaseAdapter extends EventEmitter([
       revisionId = revisionToId(this.revision);
     }
 
+    debug("triggering operation:", this.document);
     this.trigger("operation", this.document);
 
     this.ready = true;

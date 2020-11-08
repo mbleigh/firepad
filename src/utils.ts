@@ -108,3 +108,9 @@ export function log(...args: any[]) {
     console.log.apply(console, args);
   }
 }
+
+export function debug(...args: any[]) {
+  if ((window as any).DEBUG_FIREPAD) {
+    console.log("[firepad debug]", ...args);
+  }
+}

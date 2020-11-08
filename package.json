@@ -31,13 +31,14 @@
     "realtime",
     "collaborative"
   ],
-  "main": "dist/firepad.min.js",
   "files": [
-    "dist/**",
+    "lib/**",
     "LICENSE",
     "README.md",
     "package.json"
   ],
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
   "dependencies": {
     "firebase": "^7.24.0",
     "jsdom": "^16.2.2"
@@ -70,6 +71,8 @@
     "test": "grunt test",
     "travis": "grunt",
     "dev": "grunt watch",
-    "build": "grunt build"
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepare": "npm run build",
+    "watch": "tsc -w"
   }
 }

@@ -1,3 +1,5 @@
+import { debug } from "./utils";
+
 export function EventEmitter(allowedEvents?: string[]) {
   return class {
     eventListeners: {
@@ -26,12 +28,13 @@ export function EventEmitter(allowedEvents?: string[]) {
     }
 
     trigger(eventType: string, ...args: any[]) {
+      debug(this.constructor.name, "trigger:", eventType, ...args);
       for (const listener of this.eventListeners[eventType] || []) {
         listener.callback.apply(listener.context, args);
       }
     }
 
-    private validateEventType(eventType: string) {
+    validateEventType(eventType: string) {
       if (allowedEvents && !allowedEvents.includes(eventType)) {
         throw new Error(`Unknown event "${eventType}"`);
       }

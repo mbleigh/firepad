@@ -18,16 +18,16 @@ export class EditorClient extends Client {
     super();
 
     this.editorAdapter.registerCallbacks({
-      change: function (operation, inverse) {
+      change: (operation, inverse) => {
         this.onChange(operation, inverse);
       },
-      cursorActivity: function () {
+      cursorActivity: () => {
         this.onCursorActivity();
       },
-      blur: function () {
+      blur: () => {
         this.onBlur();
       },
-      focus: function () {
+      focus: () => {
         this.onFocus();
       },
     });
@@ -169,14 +169,6 @@ export class EditorClient extends Client {
       this.trigger("synced", this.state instanceof Synchronized);
     }, 0);
   }
-}
-
-// Set Const.prototype.__proto__ to Super.prototype
-function inherit(Const, Super) {
-  function F() {}
-  F.prototype = Super.prototype;
-  Const.prototype = new F();
-  Const.prototype.constructor = Const;
 }
 
 function last(arr) {
