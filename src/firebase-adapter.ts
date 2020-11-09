@@ -27,7 +27,7 @@ export class FirebaseAdapter extends EventEmitter([
   private zombie: boolean = false;
   // We store the current document state as a TextOperation so we can write checkpoints to Firebase occasionally.
   // TODO: Consider more efficient ways to do this. (composing text operations is ~linear in the length of the document).
-  private document?: TextOperation = new TextOperation();
+  private document: TextOperation = new TextOperation();
   // The next expected revision.
   private revision: number = 0;
   private checkpointrevision?: number;
@@ -99,7 +99,7 @@ export class FirebaseAdapter extends EventEmitter([
     }
 
     (this.ref as any) = null;
-    this.document = undefined;
+    (this as any).document = null;
     this.zombie = true;
   }
 
@@ -143,11 +143,11 @@ export class FirebaseAdapter extends EventEmitter([
       return;
     }
 
-    debug(this.document, operation);
+    debug("sendOperation()", this.document, operation);
     // Sanity check that this operation is valid.
     assert(
-      this.document?.targetLength === operation.baseLength,
-      "sendOperation() called with invalid operation."
+      this.document.targetLength === operation.baseLength,
+      `sendOperation() called with invalid operation. Expected operation base length (${operation.baseLength}) to match existing targetLength (${this.document?.targetLength}).`
     );
 
     // Convert revision into an id that will sort properly lexicographically.
@@ -301,7 +301,7 @@ export class FirebaseAdapter extends EventEmitter([
           pending[revisionId]
         );
       } else {
-        this.document = this.document!.compose(revision.operation!);
+        this.document = this.document.compose(revision.operation!);
       }
 
       delete pending[revisionId];
@@ -309,7 +309,7 @@ export class FirebaseAdapter extends EventEmitter([
       revisionId = revisionToId(this.revision);
     }
 
-    debug("triggering operation:", this.document);
+    debug("handleInitialRevisions() triggering operation:", this.document);
     this.trigger("operation", this.document);
 
     this.ready = true;

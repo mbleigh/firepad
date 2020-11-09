@@ -359,28 +359,30 @@ export class MonacoAdapter implements Adapter {
   }
 
   onChange = (event: monaco.editor.IModelContentChangedEvent): void => {
-    if (!this.ignoreChanges) {
-      const content = this.lastDocLines.join(this.editorModel.getEOL());
-      let offset = 0;
-
-      /** If no change information recieved */
-      if (!event.changes) {
-        var op = new TextOperation().retain(content.length);
-        this.trigger("change", op, op);
-      }
-
-      /** Iterate through all changes */
-      event.changes.forEach((change) => {
-        var pair = this.operationFromMonacoChanges(change, content, offset);
-        offset += pair[0].targetLength - pair[0].baseLength;
-
-        debug("change pair:", pair);
-        this.trigger("change", ...pair);
-      });
-
-      /** Update Editor Content */
-      this.lastDocLines = this.editorModel.getLinesContent();
+    if (this.ignoreChanges) {
+      return;
     }
+
+    const content = this.lastDocLines.join(this.editorModel.getEOL());
+    let offset = 0;
+
+    /** If no change information recieved */
+    if (!event.changes) {
+      var op = new TextOperation().retain(content.length);
+      this.trigger("change", op, op);
+    }
+
+    /** Iterate through all changes */
+    event.changes.forEach((change) => {
+      var pair = this.operationFromMonacoChanges(change, content, offset);
+      offset += pair[0].targetLength - pair[0].baseLength;
+
+      debug("change pair:", pair);
+      this.trigger("change", ...pair);
+    });
+
+    /** Update Editor Content */
+    this.lastDocLines = this.editorModel.getLinesContent();
   };
 
   /**
